@@ -1,0 +1,113 @@
+import random
+import time
+
+# Clase para el personaje
+class Personaje:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.salud = 100
+        self.ataque = 10
+        self.nivel = 1
+        self.experiencia = 0
+
+    def subir_nivel(self):
+        self.nivel += 1
+        self.salud += 20
+        self.ataque += 5
+        print(f"\n¡{self.nombre} ha subido al nivel {self.nivel}!")
+        print(f"Salud: {self.salud}, Ataque: {self.ataque}")
+        time.sleep(1)
+
+    def recibir_dano(self, dano):
+        self.salud -= dano
+        if self.salud < 0:
+            self.salud = 0
+
+    def esta_vivo(self):
+        return self.salud > 0
+
+# Clase para el enemigo
+class Enemigo:
+    def __init__(self, nombre, salud, ataque):
+        self.nombre = nombre
+        self.salud = salud
+        self.ataque = ataque
+
+    def recibir_dano(self, dano):
+        self.salud -= dano
+        if self.salud < 0:
+            self.salud = 0
+
+    def esta_vivo(self):
+        return self.salud > 0
+
+# Función para simular una pelea entre el personaje y un enemigo
+def pelear(personaje, enemigo):
+    while personaje.esta_vivo() and enemigo.esta_vivo():
+        # El personaje ataca
+        dano_personaje = random.randint(5, personaje.ataque)
+        print(f"{personaje.nombre} ataca a {enemigo.nombre} y le causa {dano_personaje} de daño.")
+        enemigo.recibir_dano(dano_personaje)
+
+        if not enemigo.esta_vivo():
+            print(f"{enemigo.nombre} ha sido derrotado!")
+            break
+
+        # El enemigo ataca
+        dano_enemigo = random.randint(5, enemigo.ataque)
+        print(f"{enemigo.nombre} ataca a {personaje.nombre} y le causa {dano_enemigo} de daño.")
+        personaje.recibir_dano(dano_enemigo)
+
+        if not personaje.esta_vivo():
+            print(f"{personaje.nombre} ha sido derrotado...")
+            break
+
+        time.sleep(1)
+
+# Función para mostrar el estado del personaje
+def mostrar_estado(personaje):
+    print(f"\nEstado de {personaje.nombre}:")
+    print(f"Nivel: {personaje.nivel}, Salud: {personaje.salud}, Ataque: {personaje.ataque}")
+    time.sleep(1)
+
+# Función principal
+def jugar():
+    print("Bienvenido al juego RPG!")
+    nombre_personaje = input("¿Cómo te llamas, héroe? ")
+    personaje = Personaje(nombre_personaje)
+
+    enemigos = [
+        Enemigo("Goblin", 50, 8),
+        Enemigo("Troll", 80, 12),
+        Enemigo("Dragón", 120, 15)
+    ]
+
+    for i in range(4):  # El personaje sube de nivel 4 veces
+        mostrar_estado(personaje)
+        enemigo = enemigos[i]
+        print(f"\n¡Un {enemigo.nombre} aparece!")
+        time.sleep(1)
+
+        pelear(personaje, enemigo)
+
+        if not personaje.esta_vivo():
+            print(f"{personaje.nombre} ha perdido la batalla. Fin del juego.")
+            break
+
+        # Después de cada victoria, el personaje sube de nivel
+        personaje.experiencia += 100
+        if personaje.experiencia >= 100:
+            personaje.subir_nivel()
+            personaje.experiencia = 0  # Reinicia la experiencia para el siguiente nivel
+
+        time.sleep(1)
+
+    if personaje.esta_vivo():
+        print(f"\n¡Felicidades {personaje.nombre}! Has completado tu aventura.")
+    else:
+        print(f"{personaje.nombre}, no pudiste completar la aventura. Fin del juego.")
+
+if __name__ == "__main__":
+    jugar()
+
+
